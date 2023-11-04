@@ -7,7 +7,9 @@
         if (wanakana.isHiragana(correctAnswer)) {
             return correctAnswer.trim() === wanakana.toHiragana(answer.trim().replace("nn", "n'"));
         } else {
-            return correctAnswer.trim() === wanakana.toKatakana(answer.trim().replace("nn", "n'"));
+            console.log(correctAnswer.trim())
+            console.log(wanakana.toKatakana(answer.trim().replace("nn", "n'")))
+            return wanakana.toKatakana(correctAnswer.trim()) === wanakana.toKatakana(answer.trim().replace("nn", "n'"));
         }
     }
 
