@@ -1,0 +1,37 @@
+{
+    "manifest_version": 3,
+    "name": "JPDB memriser",
+    "version": "0.5",
+    "permissions": [
+        "cookies",
+        "tabs",
+        "storage"
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.jpdb.io/review*"
+            ],
+            "js": [
+                "js/wanakana.min.js",
+                "content.js"
+            ]
+        }
+    ],
+    "host_permissions": [
+        "*://*.jpdb.io/"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "128": "images/logo.png"
+        }
+    },
+    "icons": {
+        "128": "images/logo.png"
+    }
+}
