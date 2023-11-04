@@ -46,6 +46,7 @@
             const buttonElement = document.querySelector("#show-answer");
             inputElement.type = "text";
             inputElement.placeholder = "Escribe la lectura de la palabra en hiragana";
+            inputElement.id = "productioninput"
 
             const keepForm = oldButtons.querySelector("form");
             const keepButton = oldButtons.querySelector("#show-answer");
@@ -62,7 +63,9 @@
                 await setCookieValue("https://jpdb.io", "answer", inputElement.value);
             });
 
-            parent.appendChild(inputElement);
+            if (!parent.querySelector("#productioninput")) {
+                parent.appendChild(inputElement);
+            }
 
             const newButtonCont = document.createElement("div");
             newButtonCont.style.display = "flex";
@@ -73,6 +76,20 @@
 
             parent.appendChild(newButtonCont);
             inputElement.focus();
+
+
+            chrome.storage.sync.get(['settings'], function (item) {
+                if (item) {
+                    const settings = JSON.parse(item["settings"]);
+                    if (settings.maxtime && settings.maxtime > 0) {
+                        setTimeout(async () => {
+                            answer = "タイムアウト";
+                            await setCookieValue("https://jpdb.io", "answer", answer);
+                            keepButton.click();
+                        }, settings.maxtime * 1000);
+                    }
+                }
+            })
         } else {
             if (answer === "") {
                 try {
@@ -81,19 +98,12 @@
                         answer = cookie;
                         await removeCookie("https://jpdb.io", "answer");
                     }
-                    if (answer === "") return;
+
                 } catch (e) {
                     console.log(e);
                 }
 
             }
-
-            const parent = document.querySelector(".answer-box");
-
-            const checkElement = document.createElement("p");
-            checkElement.textContent = `Tu respuesta: ${wanakana.toHiragana(answer)}`;
-            checkElement.style.textAlign = "center";
-            checkElement.style.fontSize = "2rem";
 
             const correct = document.querySelector("a.plain");
             const correctChilds = correct.children;
@@ -117,22 +127,65 @@
             answerElement.style.fontSize = "2rem";
             answerElement.style.textDecoration = "underline";
             answerElement.textContent = `Respuesta correcta: ${correctAnswer}`;
+            answerElement.id = "respuestacorrecta"
+
+            const parent = document.querySelector(".answer-box");
+
+            if (answer === "") {
+                parent.appendChild(answerElement);
+                return;
+            };
+
+            const checkElement = document.createElement("p");
+            checkElement.textContent = `Tu respuesta: ${wanakana.toHiragana(answer)}`;
+            checkElement.style.textAlign = "center";
+            checkElement.style.fontSize = "2rem";
+            checkElement.id = "respuestausuario";
 
             if (isCorrect(answer, correctAnswer)) {
                 checkElement.style.color = "#0F0";
+                chrome.storage.sync.get(['settings'], function (item) {
+                    if (item) {
+                        const settings = JSON.parse(item["settings"]);
+                        if (settings.skipGoods) {
+                            let goodButton = document.querySelector("#grade-4");
+                            if (!goodButton) {
+                                goodButton = document.querySelector("#grade-p");
+                            }
+                            goodButton.click();
+                        }
+                    }
+                });
             } else {
                 checkElement.style.color = "#F00";
-                parent.appendChild(answerElement);
 
-                const goodButtons = document.querySelector(".row.row-3");
-                goodButtons.remove();
+                if (!parent.querySelector("#respuestacorrecta")) {
+                    parent.appendChild(answerElement);
+                }
 
-                const badButton = document.querySelector("#grade-1");
+                chrome.storage.sync.get(['settings'], function (item) {
+                    if (item) {
+                        const settings = JSON.parse(item["settings"]);
+                        if (settings.hideonfail) {
+                            let goodButtons = document.querySelector(".row.row-3");
+                            if (!goodButtons) {
+                                goodButtons = document.querySelector("#grade-p");
+                            }
+                            goodButtons.remove();
+                        }
+                    }
+                });
+
+                let badButton = document.querySelector("#grade-1");
+                if (!badButton) {
+                    badButton = document.querySelector("#grade-f");
+                }
                 badButton.focus();
             }
 
-
-            parent.appendChild(checkElement);
+            if (!parent.querySelector("#respuestausuario")) {
+                parent.appendChild(checkElement);
+            }
         }
     }
 

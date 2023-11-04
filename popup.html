@@ -6,8 +6,28 @@
 </head>
 
 <body>
-    <div style="width: 200px;padding: 2rem; display: flex; flex-direction: column; gap: 5px;">
-        <h1 style="color: white; text-align: center;">&Uacute;nete al discord de AJR</h1>
+    <div
+        style="width: 200px;padding: 2rem; display: flex; flex-direction: column; gap: 5px;font-family: Arial, Helvetica, sans-serif;">
+        <div
+            style="color: white;display: flex;flex-direction: column; gap: 1rem; padding: 1rem; border-radius: 1rem;background: #5662F6;">
+            <h2 style="text-align: center;">Ajustes</h2>
+            <div style="display: flex;gap: 1rem;">
+                <input type="checkbox" name="" id="skipgoods">
+                <label for="skipgoods">Marcar como &quot;Good&quot; autom&aacute;ticamente al acertar la lectura</label>
+            </div>
+            <div style="display: flex;gap: 1rem;">
+                <input type="checkbox" name="" id="hideonfail">
+                <label for="hideonfail">Ocultar los botones de acierto al fallar la lectura</label>
+            </div>
+            <div style="display: flex;gap: 1rem;align-items: center;">
+                <input type="number" id="maxtime" style="height: 5ch;width: 5ch;text-align: center;" placeholder="0">
+                <div style="display: flex;flex-direction: column;gap: .5rem;">
+                    <label for="maxtime">Tiempo m&aacute;ximo (en segundos) para responder</label>
+                    <small>* 0 = infinito</small>
+                </div>
+            </div>
+        </div>
+        <h1 style="color: white; text-align: center;margin-top: 2rem;">&Uacute;nete al discord de AJR</h1>
         <div style="display: flex; justify-content: center;">
             <div style="width: 50%;">
                 <a href="https://discord.gg/y8P7mpDTcB" target="_blank" rel="noopener noreferrer">
@@ -26,5 +46,5 @@
         </div>
     </div>
 
-
+    <script src="js/popup.js"></script>
 </body>
