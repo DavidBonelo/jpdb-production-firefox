@@ -132,7 +132,9 @@
             const parent = document.querySelector(".answer-box");
 
             if (answer === "") {
-                parent.appendChild(answerElement);
+                if (!parent.querySelector("#respuestacorrecta")) {
+                    parent.appendChild(answerElement);
+                }
                 return;
             };
 
