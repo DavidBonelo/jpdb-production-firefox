@@ -7,8 +7,6 @@
         if (wanakana.isHiragana(correctAnswer)) {
             return correctAnswer.trim() === wanakana.toHiragana(answer.trim().replace("nn", "n'"));
         } else {
-            console.log(correctAnswer.trim())
-            console.log(wanakana.toKatakana(answer.trim().replace("nn", "n'")))
             return wanakana.toKatakana(correctAnswer.trim()) === wanakana.toKatakana(answer.trim().replace("nn", "n'"));
         }
     }
@@ -128,6 +126,9 @@
 
                 const goodButtons = document.querySelector(".row.row-3");
                 goodButtons.remove();
+
+                const badButton = document.querySelector("#grade-1");
+                badButton.focus();
             }
 
 
