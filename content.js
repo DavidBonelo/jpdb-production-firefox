@@ -4,10 +4,28 @@
     let answer = "";
 
     function isCorrect(answer, correctAnswer) {
+        const correct = correctAnswer.trim()
+        const user = answer.trim().replace("nn", "n'")
+
         if (wanakana.isHiragana(correctAnswer)) {
-            return correctAnswer.trim() === wanakana.toHiragana(answer.trim().replace("nn", "n'"));
+            return correct === wanakana.toHiragana(user);
         } else {
-            return wanakana.toKatakana(correctAnswer.trim()) === wanakana.toKatakana(answer.trim().replace("nn", "n'"));
+            const isCorrect = wanakana.toKatakana(correct) === wanakana.toKatakana(user);
+
+            if (!isCorrect && correct.includes("ー")) {
+                const vowels = ["ア", "イ", "ウ", "エ", "オ"];
+
+                for (const vowel of vowels) {
+                    const replacedAnswer = correct.replace("ー", vowel);
+                    if (replacedAnswer === wanakana.toKatakana(user)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            return isCorrect;
         }
     }
 
@@ -39,7 +57,11 @@
         let params = new URL(document.location).searchParams;
         if (!params.get("c")) {
             answer = "";
-            const parent = document.querySelector(".review-hidden").parentElement;
+            const isReviewing = document.querySelector(".review-hidden")
+
+            if (!isReviewing) return;
+
+            const parent = isReviewing.parentElement;
             const oldButtons = document.querySelector(".review-button-group");
 
             const inputElement = document.createElement("input");

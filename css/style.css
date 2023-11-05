@@ -6,3 +6,11 @@
 body{
     background-color: #2b3252;
 }
+
+.boing:hover{
+    transform: scale(1.2);
+}
+
+.boing{
+    transition: transform .2s;
+}
