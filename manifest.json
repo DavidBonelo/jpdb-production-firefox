@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "JPDB memriser",
-    "version": "1.0",
+    "version": "2.0",
     "permissions": [
         "cookies",
         "tabs",
@@ -14,7 +14,7 @@
     "content_scripts": [
         {
             "matches": [
-                "*://*.jpdb.io/review*"
+                "*://*.jpdb.io/*"
             ],
             "js": [
                 "js/wanakana.min.js",

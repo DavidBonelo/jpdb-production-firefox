@@ -1,11 +1,30 @@
 // background.js
 
+const serverUrl = "https://jpdb.ajr.moe"
+
 function encodeToBase64(value) {
     return btoa(unescape(encodeURIComponent(value)));
 }
 
 function decodeFromBase64(encodedValue) {
     return decodeURIComponent(escape(atob(encodedValue)));
+}
+
+async function getLeaderboard(sendResponse) {
+    const rawRes = await fetch(serverUrl + "/leaderboard")
+
+    const res = await rawRes.json()
+
+    sendResponse(res);
+}
+
+async function addPoints(username, pin, points) {
+    const body = {
+        "username": username,
+        "pin": pin,
+        "points": points
+    }
+    const res = await fetch(serverUrl + "/add_points", { method: "POST", body: JSON.stringify(body), headers: { "Content-Type": "application/json" } })
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -25,6 +44,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else if (request.action === "deleteCookie") {
         chrome.cookies.delete({ url: request.url, name: request.name }, function (cookie) {
             sendResponse("done");
+        });
+    } else if (request.action === "getLeaderboard") {
+        getLeaderboard(sendResponse);
+    } else if (request.action === "addPoints") {
+        chrome.storage.sync.get(['settings'], function (result) {
+            const settings = JSON.parse(result["settings"]);
+
+            if (!settings.username || !settings.userpin) return;
+
+            addPoints(settings.username, settings.userpin, request.points)
         });
     }
     return true;

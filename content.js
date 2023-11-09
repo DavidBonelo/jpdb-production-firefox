@@ -53,7 +53,63 @@
         });
     }
 
-    async function renderElements() {
+    function renderRanking(title, elements, username) {
+        const wrapper = document.createElement("div");
+        wrapper.style.display = "flex";
+        wrapper.style.justifyContent = "center";
+
+        const totalParent = document.createElement("div");
+        totalParent.classList.add("ranking");
+
+        const totalRanking = elements;
+
+        const rankingWrapper = document.createElement("div");
+        rankingWrapper.style.minWidth = "18.25rem";
+
+        const rankingTitle = document.createElement("h4");
+        rankingTitle.style.fontSize = "155%";
+        rankingTitle.style.textAlign = "center";
+        rankingTitle.style.fontStyle = "italic";
+        rankingTitle.textContent = "Ranking AJR"
+        const smallTitle = document.createElement("span");
+        smallTitle.style.opacity = "0.5";
+        smallTitle.style.marginLeft = "0.75rem";
+        smallTitle.style.fontSize = "80%";
+        smallTitle.textContent = title;
+        rankingTitle.appendChild(smallTitle);
+
+        rankingWrapper.appendChild(rankingTitle);
+
+        totalRanking.forEach((position, i) => {
+            const pos = document.createElement("div")
+            pos.classList.add("ranking-entry");
+
+            const posTop = document.createElement("p");
+            posTop.textContent = i + 1 + ". " + position._id;
+            if (username == position._id) {
+                posTop.textContent += " (You)"
+            }
+            posTop.style.margin = 0;
+
+            const posBottom = document.createElement("p");
+            posBottom.textContent = position.total_points;
+            posBottom.style.textAlign = "right";
+            posBottom.style.margin = 0;
+            pos.appendChild(posTop);
+            pos.appendChild(posBottom);
+
+            rankingWrapper.append(pos);
+        })
+
+        totalParent.append(rankingWrapper)
+
+        const base = document.querySelector(".unconstrained div:nth-child(2)");
+
+        wrapper.appendChild(totalParent);
+        base.prepend(wrapper);
+    }
+
+    async function renderInputElements() {
         let params = new URL(document.location).searchParams;
         if (!params.get("c")) {
             answer = "";
@@ -167,6 +223,8 @@
             checkElement.id = "respuestausuario";
 
             if (isCorrect(answer, correctAnswer)) {
+                chrome.runtime.sendMessage({ action: "addPoints", points: 1 });
+
                 checkElement.style.color = "#0F0";
                 chrome.storage.sync.get(['settings'], function (item) {
                     if (item) {
@@ -181,6 +239,7 @@
                     }
                 });
             } else {
+                chrome.runtime.sendMessage({ action: "addPoints", points: 0.2 });
                 checkElement.style.color = "#F00";
 
                 if (!parent.querySelector("#respuestacorrecta")) {
@@ -213,13 +272,35 @@
         }
     }
 
-    renderElements();
+    if (window.location.pathname.includes("review")) {
+        renderInputElements();
 
-    chrome.runtime.onMessage.addListener(
-        function (request, sender, sendResponse) {
-            // listen for messages sent from background.js
-            if (request.message === 'change') {
-                renderElements();
+        chrome.runtime.onMessage.addListener(
+            function (request, sender, sendResponse) {
+                // listen for messages sent from background.js
+                if (request.message === 'change') {
+                    renderInputElements();
+                }
+            });
+    }
+    else if (window.location.pathname.includes("leaderboard")) {
+        chrome.storage.sync.get(['settings'], function (item) {
+            if (item) {
+                const settings = JSON.parse(item["settings"]);
+                if (!settings.username) return;
+
+                chrome.runtime.sendMessage({ action: "getLeaderboard" }, (response) => {
+                    if (response.total_ranking.length > 0) {
+                        renderRanking("total", response.total_ranking, settings.username)
+                    }
+                    if (response.monthly_ranking.length > 0) {
+                        renderRanking("current month", response.monthly_ranking, settings.username)
+                    }
+                    if (response.daily_ranking.length > 0) {
+                        renderRanking("today", response.daily_ranking, settings.username)
+                    }
+                });
             }
         });
+    }
 })();
