@@ -3,9 +3,15 @@
 
     let answer = "";
 
-    function isCorrect(answer, correctAnswer) {
+    function isCorrect(answer, correctAnswer, correctKanji) {
         const correct = correctAnswer.trim()
         const user = answer.trim().replace("nn", "n'")
+
+        if(correctKanji){
+            if(answer == correctKanji){
+                return true;
+            }
+        }
 
         if (wanakana.isHiragana(correctAnswer)) {
             return correct === wanakana.toHiragana(user);
@@ -204,6 +210,22 @@
                 correctAnswer = correct.textContent;
             }
 
+            let correctAnswerKanji = "";
+
+if (correctChilds.length > 0) {
+    for (const child of correctChilds) {
+        const textContent = child.textContent;
+        const kanjiMatches = textContent.match(/[\u4e00-\u9faf]/g); 
+        
+        if (kanjiMatches) {
+            correctAnswerKanji += kanjiMatches.join("");
+        }
+    }
+} else {
+    correctAnswerKanji = correct.textContent;
+}
+
+
             const answerElement = document.createElement("p");
             answerElement.style.textAlign = "center";
             answerElement.style.fontSize = "2rem";
@@ -226,7 +248,7 @@
             checkElement.style.fontSize = "2rem";
             checkElement.id = "respuestausuario";
 
-            if (isCorrect(answer, correctAnswer)) {
+            if (isCorrect(answer, correctAnswer, correctAnswerKanji)) {
                 chrome.runtime.sendMessage({ action: "addPoints", points: 1 });
 
                 checkElement.style.color = "#0F0";
