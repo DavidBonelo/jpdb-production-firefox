@@ -22,6 +22,10 @@
                     }
                 }
 
+                if(answer == correct){
+                    return true;
+                }
+
                 return false;
             }
 
