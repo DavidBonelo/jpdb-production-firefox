@@ -194,31 +194,30 @@
             }
 
             const correct = document.querySelector("a.plain");
-            const correctChilds = correct.children;
+const correctChilds = correct.children;
 
-            let correctAnswer = "";
-            if (correctChilds.length > 0) {
-                for (const child of correctChilds) {
-                    const furi = child.querySelector("rt");
-                    if (furi) {
-                        correctAnswer += furi.textContent;
-                    } else {
-                        correctAnswer += child.textContent;
-                    }
-                }
-            } else {
-                correctAnswer = correct.textContent;
-            }
+let correctAnswer = "";
+if (correctChilds.length > 0) {
+    for (const child of correctChilds) {
+        const furi = child.querySelector("rt");
+        if (furi) {
+            correctAnswer += furi.textContent;
+        } else {
+            correctAnswer += child.textContent;
+        }
+    }
+} else {
+    correctAnswer = correct.textContent;
+}
 
-            let correctAnswerKanji = "";
+let correctAnswerKanji = "";
 
 if (correctChilds.length > 0) {
     for (const child of correctChilds) {
-        const textContent = child.textContent;
-        const kanjiMatches = textContent.match(/[\u4e00-\u9faf]/g); 
-        
-        if (kanjiMatches) {
-            correctAnswerKanji += kanjiMatches.join("");
+        for (const child2 of child.childNodes) {
+            if (child2.nodeType === Node.TEXT_NODE) {
+                correctAnswerKanji += child2.nodeValue;
+            }
         }
     }
 } else {
@@ -226,11 +225,16 @@ if (correctChilds.length > 0) {
 }
 
 
+
+console.log(`Correct answer (full): ${correctAnswer}`);
+console.log(`Correct answer (kanji only): ${correctAnswerKanji}`);
+
+
             const answerElement = document.createElement("p");
             answerElement.style.textAlign = "center";
             answerElement.style.fontSize = "2rem";
             answerElement.style.textDecoration = "underline";
-            answerElement.textContent = `Respuesta correcta: ${correctAnswer}`;
+            answerElement.textContent = `Respuesta correcta: ${correctAnswerKanji}`;
             answerElement.id = "respuestacorrecta"
 
             const parent = document.querySelector(".answer-box");
