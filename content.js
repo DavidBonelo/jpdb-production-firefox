@@ -234,7 +234,7 @@ console.log(`Correct answer (kanji only): ${correctAnswerKanji}`);
             answerElement.style.textAlign = "center";
             answerElement.style.fontSize = "2rem";
             answerElement.style.textDecoration = "underline";
-            answerElement.textContent = `Respuesta correcta: ${correctAnswerKanji}`;
+            answerElement.textContent = `Respuesta correcta: ${correctAnswer}`;
             answerElement.id = "respuestacorrecta"
 
             const parent = document.querySelector(".answer-box");
