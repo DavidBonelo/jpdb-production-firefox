@@ -1,6 +1,6 @@
 // background.js
 
-const serverUrl = "https://jpdb.ajr.moe"
+const serverUrl = "https://jpdb.manabe.es"
 
 function encodeToBase64(value) {
     return btoa(unescape(encodeURIComponent(value)));

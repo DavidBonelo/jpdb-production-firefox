@@ -90,7 +90,7 @@
     rankingTitle.style.fontSize = "155%";
     rankingTitle.style.textAlign = "center";
     rankingTitle.style.fontStyle = "italic";
-    rankingTitle.textContent = "Ranking AJR";
+    rankingTitle.textContent = "Ranking Manabe";
     const smallTitle = document.createElement("span");
     smallTitle.style.opacity = "0.5";
     smallTitle.style.marginLeft = "0.75rem";
