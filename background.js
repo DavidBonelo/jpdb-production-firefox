@@ -30,7 +30,7 @@ async function addPoints(username, pin, points) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action === "setCookie") {
         const encodedValue = encodeToBase64(request.value);
-        chrome.cookies.set({ url: request.url, name: request.name, value: encodedValue }, function (cookie) {
+        chrome.cookies.set({ url: request.url, name: request.name, value: encodedValue, expirationDate: (request.expire ? parseInt(request.expire) :(new Date().getTime() / 1000)+3600)}, function (cookie) {
             sendResponse(cookie);
         });
     } else if (request.action === "getCookie") {

@@ -29,6 +29,29 @@
         </div>
         <div
             style="color: white;display: flex;flex-direction: column; gap: 1rem; padding: 1rem; border-radius: 1rem;background: #00c189;">
+            <h2 style="text-align: center;">Ankificar JPDB</h2>
+            <div style="display: flex;gap: 1rem;">
+                <input type="checkbox" name="" id="ankify">
+                <label for="ankify">Activar</label>
+            </div>
+            <small>Activar esta casilla esconder&aacute; el n&uacute;mero de repasos pendientes de la interfaz de JPDB y
+                no te
+                permitir&aacute; repasar m&aacute;s una vez alcanzado el l&iacute;mite diarios que hayas definido en los
+                <a href="https://jpdb.io/settings">ajustes de JPDB</a>.</small>
+            <div hidden id="ankifyoptions" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex;gap: 1rem;">
+                    <input type="checkbox" name="" id="pendingreviews">
+                    <label for="pendingreviews">Esconder repasos pendientes</label>
+                </div>
+                <div style="display: flex;gap: 1rem;">
+                    <input type="checkbox" name="" id="limits">
+                    <label for="limits">Forzar l&iacute;mites de repasos</label>
+                </div>
+            </div>
+            <button id="savechanges" hidden>Guardar cambios</button>
+        </div>
+        <div
+            style="color: white;display: flex;flex-direction: column; gap: 1rem; padding: 1rem; border-radius: 1rem;background: #00c189;">
             <h2 style="text-align: center;">Ranking</h2>
             <div style="display: flex;gap: 1rem;align-items: center;flex-direction: column;">
                 <label for="username">Nombre de usuario</label>
@@ -44,7 +67,7 @@
                 <a href="https://discord.gg/y8P7mpDTcB" target="_blank" rel="noopener noreferrer"
                     style="text-decoration: none;">
                     <h1 style="color: white; text-align: center;margin-top: 2rem;">&Uacute;nete al
-                        discord de AJR</h1>
+                        discord de Manabe</h1>
                     <div style="width:50%;margin: 0 auto 0 auto;">
                         <svg viewBox="0 -28.5 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">

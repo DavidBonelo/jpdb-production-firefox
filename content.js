@@ -1,4 +1,4 @@
-(function () {
+(async function () {
   "use strict";
 
   let answer = "";
@@ -62,10 +62,10 @@
     });
   }
 
-  async function setCookieValue(url, name, value) {
+  async function setCookieValue(url, name, value, expire=null) {
     return new Promise((resolve) => {
       chrome.runtime.sendMessage(
-        { action: "setCookie", url, name, value },
+        { action: "setCookie", url, name, value,expire },
         function (response) {
           resolve(response && response.value ? response.value : null);
         }
@@ -303,7 +303,116 @@
     }
   }
 
+  async function dontTempMe(settings){
+    const alreadyReviewed = await getCookieValue("https://jpdb.io", "reviewed");
+
+    if(!alreadyReviewed) return;
+
+    if (window.location.pathname.includes("review") && settings.limits) {
+      // Make the user go home
+      window.location.href = "https://jpdb.io/";
+      alert("Ya has terminado tus repasos, puedes cerrar esta pestaña.");
+      return;
+    } else{
+      if(settings.limits){
+        // Find the other button with class outline
+        const otherAnchor = document.querySelector('input.outline');
+
+        const anchorParent = otherAnchor.parentElement;
+
+        // Delete it
+        if(otherAnchor){
+          otherAnchor.remove();
+        }
+
+        // Create a new text
+        const newAnchor = document.createElement('p');
+
+        // The user can return the next day at 2:00
+        const canReturnDate = new Date();
+        canReturnDate.setDate(canReturnDate.getDate() + 1);
+        canReturnDate.setHours(2, 0, 0, 0);
+
+        const timeLeft = canReturnDate - new Date();
+
+        newAnchor.textContent = `Ya has terminado tus repasos, puedes cerrar esta pestaña. Puedes volver dentro de ${Math.floor(timeLeft / 1000 / 60 / 60)} horas.`;
+
+        // Append it
+        anchorParent.appendChild(newAnchor);
+      }
+
+      if(settings.pendingreviews){
+        // Get the real parent
+        const realParent = document.querySelector('h4').parentElement;
+
+        // Get all the p from the parent
+        const allP = realParent.querySelectorAll('p');
+
+        // Delete the p that contains the text "available"
+        allP.forEach((p) => {
+          if(p.textContent.includes("available")){
+            p.remove();
+          }
+        });
+      }
+    }
+  }
+
+  // Get ankify settings
+  const rawSettings = await chrome.storage.sync.get(["settings"]);
+
+  const settings = JSON.parse(rawSettings["settings"]||"{}");
+
   if (window.location.pathname.includes("review")) {
+    if(settings.ankify){
+    void dontTempMe(settings);
+    }
+    const evil_title = document.querySelector('h5');
+    if(evil_title && evil_title.textContent.includes("quota") && settings.ankify && settings.limits){
+      // Change the text to "Yas has terminado tus repasos, puedes cerrar esta pestaña."
+      evil_title.textContent = "Yas has terminado tus repasos, puedes cerrar esta pestaña.";
+
+      // Access the parent
+      const evil_parent = evil_title.parentElement;
+
+      // Search for the second p occurence
+      const evil_p = evil_parent.querySelector('p:nth-of-type(2)');
+      // Search for the third p occurence
+      const evil_p2 = evil_parent.querySelector('p:nth-of-type(3)');
+
+      // Delete it
+      if(evil_p){
+        evil_p.remove();
+      }
+
+      // Delete it
+      if(evil_p2){
+        evil_p2.remove();
+      }
+
+      // Delete all the forms in the parent
+      evil_parent.querySelectorAll('form').forEach((form) => {
+        form.remove();
+      });
+
+      // Create cookie to remember that today was achieved, this reminder will be deleted at 02:00
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      tomorrow.setHours(2, 0, 0, 0);
+
+      setCookieValue("https://jpdb.io", "reviewed", "true", tomorrow.getTime() / 1000);
+    }else if(evil_title && settings.ankify){
+      // Search an input with name "continue"
+      const evil_input = document.querySelector('input[name="continue"]');
+
+      // Access to the parent form
+      const evil_form = evil_input.parentElement;
+
+      // Submit the form
+      evil_form.submit();
+    }
+
     renderInputElements();
 
     chrome.runtime.onMessage.addListener(function (
@@ -339,5 +448,17 @@
         });
       }
     });
+  } else if (settings.ankify) {
+    if(settings.pendingreviews){
+      // Find a .nav-item anchor with href to /learn
+      const learnAnchor = document.querySelector('a.nav-item');
+
+      // If it exists, change its content to just "Learn"
+      if(learnAnchor){
+          learnAnchor.textContent = "Learn";
+      }
+    }
+
+    void dontTempMe(settings);
   }
 })();
