@@ -145,9 +145,12 @@
       inputElement.type = "text";
       inputElement.placeholder = "Escribe la lectura de la palabra en hiragana";
       inputElement.id = "productioninput";
+      buttonElement.removeAttribute("autofocus");
+      inputElement.autofocus = true;
 
       const keepForm = oldButtons.querySelector("form");
       const keepButton = oldButtons.querySelector("#show-answer");
+      keepButton.removeAttribute("autofocus");
 
       inputElement.addEventListener("keyup", function (e) {
         if (e.key === "Enter") {
@@ -174,6 +177,7 @@
 
       parent.appendChild(newButtonCont);
       inputElement.focus();
+      setTimeout(() => inputElement.focus(), 100);
 
       browser.storage.sync.get(["settings"], function (item) {
         if (item) {
