@@ -42,7 +42,7 @@
 
   async function getCookieValue(url, name) {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(
+      browser.runtime.sendMessage(
         { action: "getCookie", url, name },
         function (response) {
           resolve(response && response.value ? response.value : null);
@@ -53,7 +53,7 @@
 
   async function removeCookie(url, name) {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(
+      browser.runtime.sendMessage(
         { action: "deleteCookie", url, name },
         function (response) {
           resolve(response && response.value ? response.value : null);
@@ -64,7 +64,7 @@
 
   async function setCookieValue(url, name, value, expire = null) {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(
+      browser.runtime.sendMessage(
         { action: "setCookie", url, name, value, expire },
         function (response) {
           resolve(response && response.value ? response.value : null);
@@ -175,7 +175,7 @@
       parent.appendChild(newButtonCont);
       inputElement.focus();
 
-      chrome.storage.sync.get(["settings"], function (item) {
+      browser.storage.sync.get(["settings"], function (item) {
         if (item) {
           const settings = JSON.parse(item["settings"]);
           if (settings.maxtime && settings.maxtime > 0) {
@@ -254,10 +254,10 @@
       checkElement.id = "respuestausuario";
 
       if (isCorrect(answer, correctAnswer, correctAnswerKanji)) {
-        chrome.runtime.sendMessage({ action: "addPoints", points: 1 });
+        browser.runtime.sendMessage({ action: "addPoints", points: 1 });
 
         checkElement.style.color = "#0F0";
-        chrome.storage.sync.get(["settings"], function (item) {
+        browser.storage.sync.get(["settings"], function (item) {
           if (item) {
             const settings = JSON.parse(item["settings"]);
             if (settings.skipGoods) {
@@ -270,14 +270,14 @@
           }
         });
       } else {
-        chrome.runtime.sendMessage({ action: "addPoints", points: 0.2 });
+        browser.runtime.sendMessage({ action: "addPoints", points: 0.2 });
         checkElement.style.color = "#F00";
 
         if (!parent.querySelector("#respuestacorrecta")) {
           parent.appendChild(answerElement);
         }
 
-        chrome.storage.sync.get(["settings"], function (item) {
+        browser.storage.sync.get(["settings"], function (item) {
           if (item) {
             const settings = JSON.parse(item["settings"]);
             if (settings.hideonfail) {
@@ -361,7 +361,7 @@
   }
 
   // Get ankify settings
-  const rawSettings = await chrome.storage.sync.get(["settings"]);
+  const rawSettings = await browser.storage.sync.get(["settings"]);
 
   const settings = JSON.parse(rawSettings["settings"] || "{}");
 
@@ -428,7 +428,7 @@
 
     renderInputElements();
 
-    chrome.runtime.onMessage.addListener(function (
+    browser.runtime.onMessage.addListener(function (
       request,
       sender,
       sendResponse
@@ -439,26 +439,29 @@
       }
     });
   } else if (window.location.pathname.includes("leaderboard")) {
-    chrome.storage.sync.get(["settings"], function (item) {
+    browser.storage.sync.get(["settings"], function (item) {
       if (item) {
         const settings = JSON.parse(item["settings"]);
         if (!settings.username) return;
 
-        chrome.runtime.sendMessage({ action: "getLeaderboard" }, (response) => {
-          if (response.total_ranking.length > 0) {
-            renderRanking("total", response.total_ranking, settings.username);
+        browser.runtime.sendMessage(
+          { action: "getLeaderboard" },
+          (response) => {
+            if (response.total_ranking.length > 0) {
+              renderRanking("total", response.total_ranking, settings.username);
+            }
+            if (response.monthly_ranking.length > 0) {
+              renderRanking(
+                "current month",
+                response.monthly_ranking,
+                settings.username
+              );
+            }
+            if (response.daily_ranking.length > 0) {
+              renderRanking("today", response.daily_ranking, settings.username);
+            }
           }
-          if (response.monthly_ranking.length > 0) {
-            renderRanking(
-              "current month",
-              response.monthly_ranking,
-              settings.username
-            );
-          }
-          if (response.daily_ranking.length > 0) {
-            renderRanking("today", response.daily_ranking, settings.username);
-          }
-        });
+        );
       }
     });
   } else if (settings.ankify) {

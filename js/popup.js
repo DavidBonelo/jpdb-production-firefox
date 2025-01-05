@@ -12,7 +12,7 @@ const save = document.querySelector("#savechanges");
 const ankifyOptions = document.querySelector("#ankifyoptions");
 
 document.addEventListener("DOMContentLoaded", () => {
-  chrome.storage.sync.get(["settings"], function (result) {
+  browser.storage.sync.get(["settings"], function (result) {
     settings = JSON.parse(result["settings"]);
 
     skipGoods.checked = settings.skipGoods;
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 skipGoods.addEventListener("change", (e) => {
   settings.skipGoods = e.target.checked;
 
-  chrome.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
+  browser.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
     console.log("Value is set");
   });
 });
@@ -41,7 +41,7 @@ skipGoods.addEventListener("change", (e) => {
 hideonfail.addEventListener("change", (e) => {
   settings.hideonfail = e.target.checked;
 
-  chrome.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
+  browser.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
     console.log("Value is set");
   });
 });
@@ -49,7 +49,7 @@ hideonfail.addEventListener("change", (e) => {
 maxTime.addEventListener("change", (e) => {
   settings.maxtime = e.target.value;
 
-  chrome.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
+  browser.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
     console.log("Value is set");
   });
 });
@@ -57,7 +57,7 @@ maxTime.addEventListener("change", (e) => {
 username.addEventListener("change", (e) => {
   settings.username = e.target.value;
 
-  chrome.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
+  browser.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
     console.log("Value is set");
   });
 });
@@ -65,7 +65,7 @@ username.addEventListener("change", (e) => {
 userpin.addEventListener("change", (e) => {
   settings.userpin = e.target.value;
 
-  chrome.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
+  browser.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
     console.log("Value is set");
   });
 });
@@ -91,7 +91,7 @@ ankify.addEventListener("change", (e) => {
     limits.checked = false;
   }
 
-  chrome.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
+  browser.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
     console.log("Value is set");
   });
 
@@ -102,7 +102,7 @@ ankify.addEventListener("change", (e) => {
 pendingreviews.addEventListener("change", (e) => {
   settings.pendingreviews = e.target.checked;
 
-  chrome.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
+  browser.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
     console.log("Value is set");
   });
 
@@ -113,7 +113,7 @@ pendingreviews.addEventListener("change", (e) => {
 limits.addEventListener("change", (e) => {
   settings.limits = e.target.checked;
 
-  chrome.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
+  browser.storage.sync.set({ settings: JSON.stringify(settings) }).then(() => {
     console.log("Value is set");
   });
 
@@ -123,8 +123,8 @@ limits.addEventListener("change", (e) => {
 
 save.addEventListener("click", () => {
   // Reload the page the user is on
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.reload(tabs[0].id);
+  browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    browser.tabs.reload(tabs[0].id);
   });
 
   // Disable save button
